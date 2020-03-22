@@ -4,7 +4,7 @@ import os
 import __main__
 user_module_path=os.path.realpath(__main__.__file__)
 path = os.path.dirname(os.path.realpath(Fr.__file__))
-print(path)
+
 
 def bind(func,Button_Name):
     global  path
@@ -17,20 +17,27 @@ def bind(func,Button_Name):
 
     if len(Buttons)==0:
         file_on=open(current_path,"w")
+        file_on.write("encoded_path= "+str(module_path.encode("utf-8"))+"\n")
+        file_on.write("main_path = str(encoded_path,'utf-8')\n")
+
+        
         file_on.write("import sys")
 
         file_on.write("\n")
-        file_on.write("sys.path.insert(1, '")
-        module_path = module_path[:find_slash(module_path)]
-        module_path=add_back_slash_to_path(module_path)
-        file_on.write(module_path + "')\n")
+        file_on.write("sys.path.insert(1, main_path)\n")
+        
+
+
+        #module_path = module_path[:find_slash(module_path)]
+        #module_path=add_back_slash_to_path(module_path)
+        #file_on.write(module_path + "')\n")
         file_on.close()
 
     Buttons.append(Button_Name)
 
     file_on=open(current_path,"a")
     module=module[:-3]
-    print(module)
+    
     file_on.write("\nfrom "+module+" import "+func)
     file_on.close()
 
@@ -39,7 +46,6 @@ def bind(func,Button_Name):
     file_on.write("\n    "+func+"()")
 
     file_on.close()
-    print(len(Buttons))
 
 
 
@@ -71,11 +77,12 @@ def finish():
     module_path = module_path[:find_slash(module_path)]
     package_directory=path+"\\readData.py"
     file_data=open(package_directory,"w")
-    print(package_directory)
-    module_path=module_path
-    print(type(module_path))
-    file_data.write("import sys\nsys.path.insert(1, "+"r'"+module_path+"'"+")\n")
-    file_data.write("from project import *\nfrom Agui.Tools import *\nfrom Agui.Tools1 import *\nUser_Button_List=[]\nUser_Text_Field=[]\n")
+    
+    module_path = module_path.encode("utf-8")
+    module_path = str(module_path)
+    file_data.write("encoded_path ="+module_path+"\n"+"module_path=str(encoded_path,'utf-8')\n")
+    file_data.write("import sys\nsys.path.insert(1, "+"module_path"+")\n")
+    file_data.write("from Aproject import *\nfrom Agui.Tools import *\nfrom Agui.Tools1 import *\nUser_Button_List=[]\nUser_Text_Field=[]\n")
     file_data.write("\n\nfor i in Button_Lst:\n")
     file_data.write("    new_Button=button(i['x_beginner']-150,i['y_beginner']-20,i['height'],i['width'],i['thickness'],i['color'],i['definition'])\n")
     file_data.write("    User_Button_List.append(new_Button)")
@@ -94,6 +101,9 @@ def finish():
         file_.write("    " + "if funct =="+'"'+pr +'"'+ ":\n")
         file_.write("        " + pr + "()\n")
     file_.close()
+
+
+    print("\nAll functions binded !!!")
 
 
 
